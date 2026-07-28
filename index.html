@@ -1,0 +1,639 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>미소방문 FRT 대시보드</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4"></script>
+  <style>
+    :root {
+      --bg: #f4f6f8; --card: #fff; --text: #1b1f24; --muted: #68707a;
+      --border: #dde3ea; --accent: #2563eb; --sla: #d14343; --good: #0f9f6e;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0; font-family: "Segoe UI","Apple SD Gothic Neo",sans-serif;
+      background: var(--bg); color: var(--text); font-size: 14px;
+    }
+    header {
+      background: var(--card); border-bottom: 1px solid var(--border);
+      padding: 18px 24px; display: flex; justify-content: space-between;
+      align-items: baseline; flex-wrap: wrap; gap: 12px;
+    }
+    h1 { margin: 0; font-size: 1.3rem; }
+    .sub { color: var(--muted); font-size: 12px; }
+    .mission {
+      background: var(--card);
+      border-bottom: 1px solid var(--border);
+      padding: 14px 24px 16px;
+    }
+    .mission-inner {
+      max-width: 1200px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: 1.4fr 1fr;
+      gap: 16px 24px;
+    }
+    .mission h3 {
+      margin: 0 0 8px;
+      font-size: 0.85rem;
+      color: var(--muted);
+      font-weight: 600;
+      letter-spacing: 0.02em;
+    }
+    .mission .goal-line {
+      margin: 0 0 6px;
+      font-size: 14px;
+      line-height: 1.45;
+    }
+    .mission .goal-line strong {
+      color: #d14343;
+      font-weight: 700;
+    }
+    .mission ul {
+      margin: 0;
+      padding-left: 18px;
+      font-size: 13px;
+      line-height: 1.55;
+      color: var(--text);
+    }
+    .mission .note {
+      margin-top: 6px;
+      font-size: 11px;
+      color: var(--muted);
+    }
+    @media (max-width: 900px) {
+      .mission-inner { grid-template-columns: 1fr; }
+    }
+    main { max-width: 1200px; margin: 0 auto; padding: 20px 24px 40px; }
+    .card {
+      background: var(--card); border: 1px solid var(--border);
+      border-radius: 10px; padding: 16px 18px; margin-bottom: 16px;
+    }
+    .card h2 { margin: 0 0 4px; font-size: 1rem; line-height: 1.4; }
+    .card h2 .card-tag {
+      display: block;
+      color: var(--muted);
+      font-size: 0.82em;
+      font-weight: 600;
+      letter-spacing: 0.02em;
+      margin-bottom: 2px;
+    }
+    .card h2 .n-val {
+      font-weight: 700;
+      font-size: 1.15em;
+      margin: 0 2px;
+    }
+    .card h2 .n-val.hit { color: #d14343; }
+    .card h2 .n-val.miss { color: #2563eb; }
+    .card h2 .n-hint {
+      color: #9aa3ad;
+      font-weight: 400;
+      font-size: 0.78em;
+    }
+    .card h2 .dow.off { color: #d14343; font-weight: 600; }
+    .caption { color: var(--muted); font-size: 12px; margin-bottom: 12px; }
+    canvas { max-height: 360px; }
+    .row2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+      margin-bottom: 16px;
+    }
+    .row2.row-top {
+      grid-template-columns: 1.55fr 1fr;
+    }
+    .row2 .card { margin-bottom: 0; }
+    @media (max-width: 900px) {
+      .row2, .row2.row-top { grid-template-columns: 1fr; }
+    }
+    .status-list {
+      list-style: none; margin: 0; padding: 0;
+    }
+    .status-list li {
+      display: grid;
+      grid-template-columns: 7.6em 3.2em 1fr auto;
+      align-items: baseline;
+      column-gap: 10px;
+      padding: 10px 8px;
+      border-bottom: 1px solid var(--border);
+      font-size: 13px;
+      line-height: 1.45;
+      font-variant-numeric: tabular-nums;
+    }
+    .status-list li:last-child { border-bottom: none; }
+    .status-list li.today {
+      background: #fff7ed;
+      border-radius: 6px;
+      font-weight: 600;
+    }
+    .status-list .col-date { color: var(--text); }
+    .status-list .col-date .dow.off { color: #d14343; font-weight: 600; }
+    .status-list .col-n { text-align: right; }
+    .status-list .col-n.hit { color: #d14343; font-weight: 700; }
+    .status-list .col-n.miss { color: #2563eb; font-weight: 700; }
+    .status-list .col-label { color: var(--muted); font-size: 12px; }
+    .status-list .col-verdict { text-align: right; white-space: nowrap; }
+    .status-list .col-verdict.hit { color: #d14343; font-weight: 700; }
+    .status-list .col-verdict.miss { color: #2563eb; font-weight: 700; }
+    .status-list .rel { color: var(--muted); font-weight: 400; font-size: 12px; margin-left: 4px; }
+    .status-list .nodata { color: var(--muted); }
+    #chartHourly { max-height: 320px; }
+    details.raw-fold {
+      background: var(--card); border: 1px solid var(--border);
+      border-radius: 10px; padding: 0; margin-bottom: 16px;
+    }
+    details.raw-fold > summary {
+      list-style: none; cursor: pointer; padding: 14px 18px;
+      font-weight: 600; user-select: none;
+    }
+    details.raw-fold > summary::-webkit-details-marker { display: none; }
+    details.raw-fold > summary::before {
+      content: "▸ "; color: var(--accent);
+    }
+    details.raw-fold[open] > summary::before { content: "▾ "; }
+    .fold-body { padding: 0 18px 16px; }
+    .table-wrap { overflow: auto; max-height: 420px; border: 1px solid var(--border); border-radius: 8px; }
+    table { width: 100%; border-collapse: collapse; font-size: 12px; min-width: 900px; }
+    th, td { padding: 8px 10px; border-bottom: 1px solid var(--border); text-align: left; }
+    th { background: #f8fafc; position: sticky; top: 0; }
+    tr:hover td { background: #f8fafc; }
+    .ok { color: var(--good); }
+    .bad { color: var(--sla); }
+    .hint { color: var(--muted); font-size: 12px; margin-top: 8px; }
+    a { color: var(--accent); }
+  </style>
+</head>
+<body>
+<header>
+  <div>
+    <h1>미소방문 FRT 대시보드</h1>
+    <div class="sub" id="subtitle"></div>
+  </div>
+  <div class="sub" id="genAt"></div>
+</header>
+<section class="mission" aria-label="목적과 목표">
+  <div class="mission-inner">
+    <div>
+      <h3>목적 · 목표</h3>
+      <p class="goal-line"><b>목적</b> — 문의에 대해 빠른 응대를 통해 고객경험을 개선한다.</p>
+      <p class="goal-line"><b>목표</b> — 미소방문 운영시간 내 FRT 평균 <strong>3분 이내</strong></p>
+      <p class="goal-line"><b>제외</b> — 운영시간 내 <strong>점심 자동응답</strong> 구간은 FRT에서 제외한다. <span id="pauseRuleNote" class="note" style="display:inline;margin:0"></span></p>
+      <p class="note">타이틀 숫자(N)는 운영시간 내 평균 FRT입니다. ≤3분=빨강, &gt;3분=파랑.</p>
+    </div>
+    <div>
+      <h3>미소방문 운영시간</h3>
+      <ul>
+        <li><b>주중</b> — 09:00 ~ 21:00</li>
+        <li><b>주말 · 공휴일</b> — 10:00 ~ 19:00</li>
+      </ul>
+      <p class="note">참고: 7/1~7/19는 주중·주말 모두 10:00~19:00으로 집계. 7/20부터 위 운영시간을 적용.</p>
+    </div>
+  </div>
+</section>
+<main>
+  <div class="row2 row-top">
+    <div class="card">
+      <h2 id="chartTitle">당일 시간별 평균 FRT</h2>
+      <div class="caption" id="hourlyCaption">막대 클릭 → raw 폴드 · 파랑=운영시간 · 연보라=운영외 · 빨간 점선=3분 SLA · 연한 배경=운영시간 구간</div>
+      <canvas id="chartHourly"></canvas>
+      <div class="hint" id="clickHint">시간대를 클릭하면 raw가 펼쳐집니다.</div>
+    </div>
+    <div class="card">
+      <h2 id="statusTitle">일일 운영시간내 FRT 달성 여부</h2>
+      <div class="caption">목표 3분 · 성공=≤3 · 간극=실측−3 · 최신일 위 · 주말·공휴일은 요일만 빨강</div>
+      <ul id="status7d" class="status-list"></ul>
+    </div>
+  </div>
+
+  <div class="row2">
+    <div class="card">
+      <h2 id="trendTitle">7D 기준 · 일자별 평균 FRT</h2>
+      <div class="caption">최근 7일 · 회색=당일 전체 평균 · 초록=운영시간 내 평균 · 파랑=운영시간 내 7D · 빨간 점선=3분 SLA</div>
+      <canvas id="chartD7"></canvas>
+    </div>
+    <div class="card">
+      <h2 id="monthTitle">7월 일자별 평균 FRT</h2>
+      <div class="caption">월 1일~당일 · 옅은 회색=일자별 전체 평균 · 빨강/파랑=운영시간 내(≤3/&gt;3) · 빨간 점선=3분 SLA · 운영규칙: 7/1~19=10~19, 7/20~=주중09~21/주말10~19</div>
+      <canvas id="chartMonth"></canvas>
+    </div>
+  </div>
+
+  <details class="raw-fold" id="rawFold">
+    <summary id="rawSummary">Raw 세션 보기 (접힘)</summary>
+    <div class="fold-body">
+      <div class="caption" id="rawCaption"></div>
+      <p><a id="rawCsvLink" href="#" download>CSV 다운로드</a></p>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>시</th><th>구분</th><th>고객시각</th><th>응답시각</th>
+              <th>FRT(분)</th><th>3분</th><th>고객ID</th><th>채널</th>
+              <th>고객메시지</th><th>파트너응답</th>
+            </tr>
+          </thead>
+          <tbody id="rawTable"></tbody>
+        </table>
+      </div>
+    </div>
+  </details>
+</main>
+<script>
+const D = {"generated_at": "2026-07-28T16:10:24.668534+09:00", "title": "미소방문 FRT 대시보드", "date": "2026-07-28", "sla_min": 3, "ops_hours": "주중 09:00~21:00 (7/20~)", "ops_start": 9, "ops_end": 21, "ops_rule": "7/1~7/19: 10~19 · 7/20~: 주중 09~21 / 주말 10~19", "source": "raw_message", "raw_csv": "daily/raw/FRT_RAW_20260728.csv", "hours": [{"hour": 0, "n": 0, "avg_min": null, "sla_pct": null, "ops": false}, {"hour": 1, "n": 0, "avg_min": null, "sla_pct": null, "ops": false}, {"hour": 2, "n": 0, "avg_min": null, "sla_pct": null, "ops": false}, {"hour": 3, "n": 0, "avg_min": null, "sla_pct": null, "ops": false}, {"hour": 4, "n": 0, "avg_min": null, "sla_pct": null, "ops": false}, {"hour": 5, "n": 0, "avg_min": null, "sla_pct": null, "ops": false}, {"hour": 6, "n": 0, "avg_min": null, "sla_pct": null, "ops": false}, {"hour": 7, "n": 0, "avg_min": null, "sla_pct": null, "ops": false}, {"hour": 8, "n": 0, "avg_min": null, "sla_pct": null, "ops": false}, {"hour": 9, "n": 5, "avg_min": 6.1, "sla_pct": 80.0, "ops": true}, {"hour": 10, "n": 11, "avg_min": 4.2, "sla_pct": 54.5, "ops": true}, {"hour": 11, "n": 8, "avg_min": 2.3, "sla_pct": 87.5, "ops": true}, {"hour": 12, "n": 14, "avg_min": 2.6, "sla_pct": 78.6, "ops": true}, {"hour": 13, "n": 4, "avg_min": 1.8, "sla_pct": 75.0, "ops": true}, {"hour": 14, "n": 4, "avg_min": 1.7, "sla_pct": 75.0, "ops": true}, {"hour": 15, "n": 3, "avg_min": 3.6, "sla_pct": 33.3, "ops": true}, {"hour": 16, "n": 0, "avg_min": null, "sla_pct": null, "ops": true}, {"hour": 17, "n": 0, "avg_min": null, "sla_pct": null, "ops": true}, {"hour": 18, "n": 0, "avg_min": null, "sla_pct": null, "ops": true}, {"hour": 19, "n": 0, "avg_min": null, "sla_pct": null, "ops": true}, {"hour": 20, "n": 0, "avg_min": null, "sla_pct": null, "ops": true}, {"hour": 21, "n": 0, "avg_min": null, "sla_pct": null, "ops": false}, {"hour": 22, "n": 0, "avg_min": null, "sla_pct": null, "ops": false}, {"hour": 23, "n": 0, "avg_min": null, "sla_pct": null, "ops": false}], "raw_by_hour": {"0": [], "1": [], "2": [], "3": [], "4": [], "5": [], "6": [], "7": [], "8": [], "9": [{"hour": 9, "ops": true, "channel": "1399e0cdccfcf440ab84651676d9", "channel_url": "sendbird_group_channel_209709691_2900b9734cee1399e0cdccfcf440ab84651676d9", "customer_id": "Customer_3675544", "customer_at": "09:29:42", "partner_at": "09:32:32", "frt_min": 2.8, "sla_ok": true, "customer_msg": "안녕하세요. 저희가 업체중에 이쪽으로 하려고 하는데요.  저번에 담당자분이 방문하셨을때 그 이사진행담당자분이 직접참여해야 추가금 관련. 문제가 ", "partner_msg": "네  맞습니다.  영상, 상담내용 변경없다면 당일 추가비용 없습니다."}, {"hour": 9, "ops": true, "channel": "c1837622bf0f67fb023e02422640", "channel_url": "sendbird_group_channel_209709691_f221260e1689c1837622bf0f67fb023e02422640", "customer_id": "Customer_632040", "customer_at": "09:58:34", "partner_at": "09:58:44", "frt_min": 0.2, "sla_ok": true, "customer_msg": "안녕하세요, 차량등록 해야해서 차번호 알려주시면 감사하겠습니다.", "partner_msg": "넵 확인 돕겠습니다."}, {"hour": 9, "ops": true, "channel": "efdd9724ee4fca14e0d00fe27e1a", "channel_url": "sendbird_group_channel_375830134_c4b6d171ca7cefdd9724ee4fca14e0d00fe27e1a", "customer_id": "Customer_3695722", "customer_at": "09:58:31", "partner_at": "10:24:28", "frt_min": 26.0, "sla_ok": false, "customer_msg": "네", "partner_msg": "넵 현재 다시 진행중입니다. 감사합니다."}, {"hour": 9, "ops": true, "channel": "d2a4d3498ae8568a3fc72d48c0ef", "channel_url": "sendbird_group_channel_383391957_b8848a19dfa1d2a4d3498ae8568a3fc72d48c0ef", "customer_id": "Customer_3744277", "customer_at": "09:23:14", "partner_at": "09:24:36", "frt_min": 1.4, "sla_ok": true, "customer_msg": "안녕하세요. 이사업체는 외부 업체로 결정됐습니다. 신경써주셔서 감사합니다.", "partner_msg": "안녕하세요. 주문을 취소로 돕겠습니다."}, {"hour": 9, "ops": true, "channel": "3267b162df55ae2ae2e2bf6eb74d", "channel_url": "sendbird_group_channel_384660292_f4d69e475b4a3267b162df55ae2ae2e2bf6eb74d", "customer_id": "Customer_3751536", "customer_at": "09:54:24", "partner_at": "09:54:40", "frt_min": 0.3, "sla_ok": true, "customer_msg": "안녕하세요! 혹시 소요시간이 얼마나 걸릴까요?", "partner_msg": "대략 30분 정도 소요됩니다."}], "10": [{"hour": 10, "ops": true, "channel": "2e416fd05729a67cb41b5e5c443c", "channel_url": "sendbird_group_channel_209709691_16ddc60f218d2e416fd05729a67cb41b5e5c443c", "customer_id": "Customer_3752129", "customer_at": "10:34:34", "partner_at": "10:37:26", "frt_min": 2.9, "sla_ok": true, "customer_msg": "네 ^^ 가능합니다", "partner_msg": "안녕하세요,. 플래너의 방문시에 견적진행관련 모든 내용을 전달해주시면 꼼꼼하게 방문정보를 수집하겠습니다."}, {"hour": 10, "ops": true, "channel": "c1ae19e71ff2cea898f72bfc142d", "channel_url": "sendbird_group_channel_209709691_356c1a9e4dc0c1ae19e71ff2cea898f72bfc142d", "customer_id": "Customer_3732853", "customer_at": "10:30:06", "partner_at": "10:38:43", "frt_min": 8.6, "sla_ok": false, "customer_msg": "쇼파 침대 냉장고를 안가져가는데 3.5톤5톤이왜필요해요?", "partner_msg": "안녕하세요.  해당 내용뿐만아니라 모든 파트너분들은 영상 속 잔짐 및 모든 상담내용을 꼼꼼하게 보고 당일 추가요금 없는 기준으로 견적에 참여해주"}, {"hour": 10, "ops": true, "channel": "f06350de2dbb9f5c150f1724c5b3", "channel_url": "sendbird_group_channel_209709691_860b645ecaebf06350de2dbb9f5c150f1724c5b3", "customer_id": "Customer_3745292", "customer_at": "10:24:20", "partner_at": "10:24:57", "frt_min": 0.6, "sla_ok": true, "customer_msg": "탈거는 가능한가요?", "partner_msg": "식기세척기가 빌트인으로 되어있으면 탈거가 어렵습니다. 미리 제조사측에 분리를 해두어야합니다."}, {"hour": 10, "ops": true, "channel": "2d20d3dc01e03990c3343ed9f2c2", "channel_url": "sendbird_group_channel_209709691_88e0199614fc2d20d3dc01e03990c3343ed9f2c2", "customer_id": "Customer_3751942", "customer_at": "10:21:40", "partner_at": "10:22:14", "frt_min": 0.6, "sla_ok": true, "customer_msg": "면몽동원베네스트 1202호", "partner_msg": "출발지 주소 를 수정해드리면 될까요."}, {"hour": 10, "ops": true, "channel": "41aac09e75a35683aecde8047e03", "channel_url": "sendbird_group_channel_209709691_ea1c2838596b41aac09e75a35683aecde8047e03", "customer_id": "Customer_3744090", "customer_at": "10:29:25", "partner_at": "10:35:01", "frt_min": 5.6, "sla_ok": false, "customer_msg": "오늘 연락 받은게 없어서 안오신다는데...", "partner_msg": "해당 내용 바로 확인해보겠습니다. 불편끼쳐드려 죄송해요,"}, {"hour": 10, "ops": true, "channel": "8ab8ccc2ff589f872cd5ac92d516", "channel_url": "sendbird_group_channel_209709691_ea5e0d5dcd158ab8ccc2ff589f872cd5ac92d516", "customer_id": "Customer_3740957", "customer_at": "10:29:13", "partner_at": "10:31:27", "frt_min": 2.2, "sla_ok": true, "customer_msg": "어떻게 하는건지 잘 모르겠어요", "partner_msg": "💳 [계약 및 결제 안내]  📱 앱에서 쉽게 계약하기 미소 홈 → 예약내역(이사) → 견적서 → 계약하기  계약과 결제는 2단계로 진행됩니다 😊"}, {"hour": 10, "ops": true, "channel": "85b964fb6ffdf4aafc201831927d", "channel_url": "sendbird_group_channel_209709691_f109b87e3c9e85b964fb6ffdf4aafc201831927d", "customer_id": "Customer_3752190", "customer_at": "10:52:56", "partner_at": "10:55:56", "frt_min": 3.0, "sla_ok": true, "customer_msg": "시간보다 일찍 오지 말아주세요", "partner_msg": "당일 플래너로부터 연락을 받게 되실거에요.  보통 플래너도 해당일정에 맞춰서 가게 될 예정입니다."}, {"hour": 10, "ops": true, "channel": "af4f1a36264df166d03ed7467a8a", "channel_url": "sendbird_group_channel_229958447_8cd192ef17e2af4f1a36264df166d03ed7467a8a", "customer_id": "Customer_2964219", "customer_at": "10:08:38", "partner_at": "10:14:12", "frt_min": 5.6, "sla_ok": false, "customer_msg": "5톤기준  당일 이사비용, 3일 보관이사비용", "partner_msg": "안녕하세요,. 해당 내용은 방문하는 플래너에게 꼭 전달해주세요"}, {"hour": 10, "ops": true, "channel": "1e236b366403e016d7784badb686", "channel_url": "sendbird_group_channel_381774696_584301dee0531e236b366403e016d7784badb686", "customer_id": "Customer_3738238", "customer_at": "10:07:11", "partner_at": "10:14:42", "frt_min": 7.5, "sla_ok": false, "customer_msg": "안녕하세요 안내주신 업체중, 행복이사에 9/22 화요일로 날짜변경도 가능할까요?", "partner_msg": "넵 확인해볼게요,."}, {"hour": 10, "ops": true, "channel": "aaa1395de99720870ad900a0a232", "channel_url": "sendbird_group_channel_384755609_14bdfe68102aaaa1395de99720870ad900a0a232", "customer_id": "Customer_3752096", "customer_at": "10:24:09", "partner_at": "10:25:37", "frt_min": 1.5, "sla_ok": true, "customer_msg": "매니저님 내일 오전 10시에 방문하시는걸로 가능하실까요?", "partner_msg": "그날 10시는 방문이 어려운 상황입니다."}, {"hour": 10, "ops": true, "channel": "03244feb1d96ce3545b50264ec4c", "channel_url": "sendbird_group_channel_384759935_4282cb8dd40503244feb1d96ce3545b50264ec4c", "customer_id": "Customer_3752134", "customer_at": "10:06:06", "partner_at": "10:14:23", "frt_min": 8.3, "sla_ok": false, "customer_msg": "안녕하세요 혹시 1시간만 시간을 앞당길수 있을까요?", "partner_msg": "넵 확인해보겠습니다."}], "11": [{"hour": 11, "ops": true, "channel": "ccfb727aaaa24e44a6b47a3417eb", "channel_url": "sendbird_group_channel_209709691_282b707592b9ccfb727aaaa24e44a6b47a3417eb", "customer_id": "Customer_3703941", "customer_at": "11:29:20", "partner_at": "11:31:56", "frt_min": 2.6, "sla_ok": true, "customer_msg": "국제트렌스 계약 했는데 계약서를 아직도 안 보내주시네요", "partner_msg": "안녕하세요."}, {"hour": 11, "ops": true, "channel": "d64b373f0313ccc903afce5879df", "channel_url": "sendbird_group_channel_209709691_7c22f537c6fad64b373f0313ccc903afce5879df", "customer_id": "Customer_3751817", "customer_at": "11:28:57", "partner_at": "11:31:47", "frt_min": 2.8, "sla_ok": true, "customer_msg": "안녕하세요. 수요일 오후에 뵙겠습니다.", "partner_msg": "감사합니다."}, {"hour": 11, "ops": true, "channel": "87d486e6c15a33cc43ee63b003f3", "channel_url": "sendbird_group_channel_209709691_e7a5a04eef0d87d486e6c15a33cc43ee63b003f3", "customer_id": "Customer_2092445", "customer_at": "11:03:11", "partner_at": "11:05:52", "frt_min": 2.7, "sla_ok": true, "customer_msg": "저희침대", "partner_msg": "침대의 경우 메트리스를 잠시 구겨서 넣어 진행하는경우가 많습니다."}, {"hour": 11, "ops": true, "channel": "1b22cd5f46be7318a4cc365f40c2", "channel_url": "sendbird_group_channel_375666317_a8139e235b471b22cd5f46be7318a4cc365f40c2", "customer_id": "Customer_3694476", "customer_at": "11:10:51", "partner_at": "11:14:57", "frt_min": 4.1, "sla_ok": false, "customer_msg": "안녕하세요 평균적인 이사 포장 소요시간이 어느정도인지 여쭤봐도될까요", "partner_msg": "안녕하세요,"}, {"hour": 11, "ops": true, "channel": "0e98ae667c196c5c1831fcc658c9", "channel_url": "sendbird_group_channel_381470532_a6ae301f22ca0e98ae667c196c5c1831fcc658c9", "customer_id": "Customer_3736062", "customer_at": "11:16:42", "partner_at": "11:18:17", "frt_min": 1.6, "sla_ok": true, "customer_msg": "네 알겠습니다. 감사합니다.", "partner_msg": "넵 최대한 견적이수집되는대로 전달드릴게요"}, {"hour": 11, "ops": true, "channel": "5d33d37231b07abc30de8d5c92b1", "channel_url": "sendbird_group_channel_384521335_b86b528138ed5d33d37231b07abc30de8d5c92b1", "customer_id": "Customer_3750362", "customer_at": "11:55:30", "partner_at": "11:57:15", "frt_min": 1.8, "sla_ok": true, "customer_msg": "혹시 폐기물처리도 가능한가요?", "partner_msg": "폐기물처리는 미소앱에서 따로 신청해야합니다."}, {"hour": 11, "ops": true, "channel": "43d717620464f1124d68a19050ff", "channel_url": "sendbird_group_channel_384773361_2ecf5ebb742243d717620464f1124d68a19050ff", "customer_id": "Customer_3752268", "customer_at": "11:00:41", "partner_at": "11:02:18", "frt_min": 1.6, "sla_ok": true, "customer_msg": "혹시 오후 6시는 어려우실까요?", "partner_msg": "확인해보겠습니다."}, {"hour": 11, "ops": true, "channel": "fd9c80b6a09bb775cc8a17ddfcd1", "channel_url": "sendbird_group_channel_384777326_6385d7f1a30bfd9c80b6a09bb775cc8a17ddfcd1", "customer_id": "Customer_3752316", "customer_at": "11:47:47", "partner_at": "11:48:40", "frt_min": 0.9, "sla_ok": true, "customer_msg": "안녕하세요  내 알겠습니다", "partner_msg": "감사합니다."}], "12": [{"hour": 12, "ops": true, "channel": "fd9b1e61bdc2de10bd2b5684f4ab", "channel_url": "sendbird_group_channel_206161231_092930589b7bfd9b1e61bdc2de10bd2b5684f4ab", "customer_id": "Customer_1891585", "customer_at": "12:32:26", "partner_at": "12:42:34", "frt_min": 10.1, "sla_ok": false, "customer_msg": "원픽운송으로", "partner_msg": "넵 💳 [계약 및 결제 안내]  📱 앱에서 쉽게 계약하기 미소 홈 → 예약내역(이사) → 견적서 → 계약하기  계약과 결제는 2단계로 진행됩니다"}, {"hour": 12, "ops": true, "channel": "79964f677359793d91a64e869dcf", "channel_url": "sendbird_group_channel_209709691_12cb9d63a7b479964f677359793d91a64e869dcf", "customer_id": "Customer_2692724", "customer_at": "12:23:37", "partner_at": "12:25:43", "frt_min": 2.1, "sla_ok": true, "customer_msg": "안녕하세요 저는 보관이사가 필여합니다", "partner_msg": "안녕하세요. 이사 시작일을 수정해둘게요."}, {"hour": 12, "ops": true, "channel": "f3496872b6f8ed5fcafcea069da6", "channel_url": "sendbird_group_channel_209709691_1e607a639d4bf3496872b6f8ed5fcafcea069da6", "customer_id": "Customer_2645450", "customer_at": "12:40:13", "partner_at": "12:41:03", "frt_min": 0.8, "sla_ok": true, "customer_msg": "저기 두번째 업체로 하려고합니다", "partner_msg": "넵 앱에서 먼저 계약하기를 눌러주시면 계약안내를 돕겠습니다."}, {"hour": 12, "ops": true, "channel": "c7b5d2932e61600f71a49839d0cb", "channel_url": "sendbird_group_channel_209709691_ac48b3d2874fc7b5d2932e61600f71a49839d0cb", "customer_id": "Customer_2813028", "customer_at": "12:43:41", "partner_at": "12:44:58", "frt_min": 1.3, "sla_ok": true, "customer_msg": "주변분들의 일반 시세보다 너무 비싼것 같아요.ㅠ 최근에 33평 아파트 이사를 190에 하신 분도 계시던데.. 좀더 가격이 저렴한 업체로 2군데만", "partner_msg": "넵 우선 만족스럽지 못한 견적을 드린 것 같아 죄송합니다."}, {"hour": 12, "ops": true, "channel": "87d486e6c15a33cc43ee63b003f3", "channel_url": "sendbird_group_channel_209709691_e7a5a04eef0d87d486e6c15a33cc43ee63b003f3", "customer_id": "Customer_2092445", "customer_at": "12:38:32", "partner_at": "12:38:54", "frt_min": 0.4, "sla_ok": true, "customer_msg": "조금 걸리는부분이", "partner_msg": "어떤 것이 필요하실까요?"}, {"hour": 12, "ops": true, "channel": "2b8c460354583d94eed55917a99e", "channel_url": "sendbird_group_channel_209709691_fb566695ed702b8c460354583d94eed55917a99e", "customer_id": "Customer_3741452", "customer_at": "12:37:07", "partner_at": "12:41:27", "frt_min": 4.3, "sla_ok": false, "customer_msg": "안녕하세요 ^^  제가 받은 금액이 지연이사가 포함된 내용일까요?", "partner_msg": "[대기 이사] 대기 사유: 그외 희망 퇴거시간: 12시 0분 희망 입주시간: 16시 0분 "}, {"hour": 12, "ops": true, "channel": "2184ff36432319c03b2e78acf346", "channel_url": "sendbird_group_channel_230498944_03c105fc1b3c2184ff36432319c03b2e78acf346", "customer_id": "Customer_1020451", "customer_at": "12:11:40", "partner_at": "12:12:24", "frt_min": 0.7, "sla_ok": true, "customer_msg": "예전엔 견적업체이서ㅠ왓던거같운데", "partner_msg": "1회 방문에 4개의 견적을 제공해드리고 있습니다."}, {"hour": 12, "ops": true, "channel": "c6f6117f07aea893808367ff0075", "channel_url": "sendbird_group_channel_284089110_eccacd4f9c20c6f6117f07aea893808367ff0075", "customer_id": "Customer_3277239", "customer_at": "12:56:17", "partner_at": "13:06:20", "frt_min": 10.1, "sla_ok": false, "customer_msg": "안녕하세요. 이사업체 견적서가 4곳이라 들었는데, 1곳만 왔네요", "partner_msg": "안녕하세요, 추가로 더 들어오는대로 견적을 전달드리겠습니다."}, {"hour": 12, "ops": true, "channel": "1e236b366403e016d7784badb686", "channel_url": "sendbird_group_channel_381774696_584301dee0531e236b366403e016d7784badb686", "customer_id": "Customer_3738238", "customer_at": "12:52:22", "partner_at": "12:53:19", "frt_min": 1.0, "sla_ok": true, "customer_msg": "커튼은 해체 및 설치까지 해주시나요?", "partner_msg": "넵 해당 내용 포함되어있어요"}, {"hour": 12, "ops": true, "channel": "aafae1f519cbf8721244c7b8cc5d", "channel_url": "sendbird_group_channel_381991227_2a572b1daf47aafae1f519cbf8721244c7b8cc5d", "customer_id": "Customer_3739564", "customer_at": "12:48:25", "partner_at": "12:49:39", "frt_min": 1.2, "sla_ok": true, "customer_msg": "주문을 취소할게요", "partner_msg": "넵 주문 취소로 돕겠습니다."}, {"hour": 12, "ops": true, "channel": "ee252c81048ce347954c7cb9d484", "channel_url": "sendbird_group_channel_382114607_62d685050becee252c81048ce347954c7cb9d484", "customer_id": "Customer_3740203", "customer_at": "12:38:15", "partner_at": "12:39:29", "frt_min": 1.2, "sla_ok": true, "customer_msg": "혹시 그날은 정신없어 문의못했는데요...커튼(브라인드)도 다 떼어주시는건가요~?", "partner_msg": "넵 단순 해체는 충분히 가능합니다. 다만 이사업체 계약 이후에 이사 이전에 업체측에 해당 내용을 전달해주시면 좋을 것 같아요/"}, {"hour": 12, "ops": true, "channel": "c479ce8ca0dd7bf0455cede085b1", "channel_url": "sendbird_group_channel_383932144_e6986e801ecec479ce8ca0dd7bf0455cede085b1", "customer_id": "Customer_3746375", "customer_at": "12:31:43", "partner_at": "12:32:43", "frt_min": 1.0, "sla_ok": true, "customer_msg": "직접 이사업체가 와서 견적한게 아니라 좀 고민되네요 제가 받은곳이랑 차이가 없어서요~", "partner_msg": "네 그럼 비교하고 싶은 정보를 저희에게 알려주시면 저희가 더 투명하게 알려드릴 수 있습니다."}, {"hour": 12, "ops": true, "channel": "1412e093f52e613cdec8d05ad190", "channel_url": "sendbird_group_channel_384426341_44f69baa81e51412e093f52e613cdec8d05ad190", "customer_id": "Customer_3749618", "customer_at": "12:02:14", "partner_at": "12:02:24", "frt_min": 0.2, "sla_ok": true, "customer_msg": "즐거운이사로 해주세요", "partner_msg": "감사합니다."}, {"hour": 12, "ops": true, "channel": "9b7db04352b04bc6514bdcf9346c", "channel_url": "sendbird_group_channel_384507963_b7fb881fab539b7db04352b04bc6514bdcf9346c", "customer_id": "Customer_3750277", "customer_at": "12:17:32", "partner_at": "12:19:01", "frt_min": 1.5, "sla_ok": true, "customer_msg": "스피드이사는 1톤3대가 나온다는걸로가요?", "partner_msg": "넵 5톤물량을 1톤차 3대가 수행하는 경우 5톤보다 더 많이 적재할 수 있습니다."}], "13": [{"hour": 13, "ops": true, "channel": "7d98b32d9e5b68a17ca4ff21e5d2", "channel_url": "sendbird_group_channel_209709691_ab48a7f507457d98b32d9e5b68a17ca4ff21e5d2", "customer_id": "Customer_3748728", "customer_at": "13:07:54", "partner_at": "13:09:27", "frt_min": 1.6, "sla_ok": true, "customer_msg": "이사날짜를4일로 변경가능한가요?", "partner_msg": "안녕하세요,. 이사일자 변경이 확정인가요?"}, {"hour": 13, "ops": true, "channel": "38d7cbadce6a08b1764930d41d8f", "channel_url": "sendbird_group_channel_209709691_c76edaf4e29d38d7cbadce6a08b1764930d41d8f", "customer_id": "Customer_3318708", "customer_at": "13:06:22", "partner_at": "13:07:11", "frt_min": 0.8, "sla_ok": true, "customer_msg": "네 안녕하세요 😄  검토해 보았으나 저희는 다른 견적받은 곳과 계약을 하게 되었습니다. 더우신 날 고생 하셨는데 죄송합니다.", "partner_msg": "넵 그럼 견적 취소로 도와드리겠습니다."}, {"hour": 13, "ops": true, "channel": "7cf00f7cfac501a751c692e60576", "channel_url": "sendbird_group_channel_209709691_ff542b24a18a7cf00f7cfac501a751c692e60576", "customer_id": "Customer_3751246", "customer_at": "13:06:29", "partner_at": "13:06:44", "frt_min": 0.3, "sla_ok": true, "customer_msg": "원래 벽걸이 tv이고 부품도 다 있을거에요", "partner_msg": "넵 관련하여선 견적서 상세내용에서 가능여부를 확인해주세요."}, {"hour": 13, "ops": true, "channel": "73c13fc94617c2c6a1ebd27c6458", "channel_url": "sendbird_group_channel_240868510_5c827863a6dd73c13fc94617c2c6a1ebd27c6458", "customer_id": "Customer_3033434", "customer_at": "13:11:25", "partner_at": "13:15:55", "frt_min": 4.5, "sla_ok": false, "customer_msg": "안녕하세요, 그러면 혹시 8월2일(일) 오전은 안될까요? 추가로 짐보관도 가능할지 문의드립니다.", "partner_msg": "안녕하세요, 해당 문의는 방문하는 플래너분에게 직접 전달해주시면 됩니다.  감사합니다."}], "14": [{"hour": 14, "ops": true, "channel": "9c2000800d97a7f2af159b398570", "channel_url": "sendbird_group_channel_209709691_3b73e99ced969c2000800d97a7f2af159b398570", "customer_id": "Customer_3752160", "customer_at": "14:52:04", "partner_at": "14:55:32", "frt_min": 3.5, "sla_ok": false, "customer_msg": "네", "partner_msg": "감사합니다."}, {"hour": 14, "ops": true, "channel": "fd72bcdb113b822cc00b211aa8ee", "channel_url": "sendbird_group_channel_209709691_5143b8f21a52fd72bcdb113b822cc00b211aa8ee", "customer_id": "Customer_1117214", "customer_at": "14:52:02", "partner_at": "14:53:05", "frt_min": 1.0, "sla_ok": true, "customer_msg": "좀 더 낮은 견적을 받아볼 수는 없을까용 ?", "partner_msg": "추가견적을 더 받아보겠습니다."}, {"hour": 14, "ops": true, "channel": "87d486e6c15a33cc43ee63b003f3", "channel_url": "sendbird_group_channel_209709691_e7a5a04eef0d87d486e6c15a33cc43ee63b003f3", "customer_id": "Customer_2092445", "customer_at": "14:38:11", "partner_at": "14:38:28", "frt_min": 0.3, "sla_ok": true, "customer_msg": "확인해도되나요", "partner_msg": "미소가 중간에서 더 잘확인해드릴 수 있어요."}, {"hour": 14, "ops": true, "channel": "00df192dad81b1c4242d1415e5ec", "channel_url": "sendbird_group_channel_383079205_8b9979f36f2400df192dad81b1c4242d1415e5ec", "customer_id": "Customer_3743634", "customer_at": "14:33:24", "partner_at": "14:35:12", "frt_min": 1.8, "sla_ok": true, "customer_msg": "다른곳 견적과 가격이 차이가 많이나서 진행하기 힘들 것 같습니다", "partner_msg": "주문은 취소로 돕겠습니다."}], "15": [{"hour": 15, "ops": true, "channel": "9fc1c280f6e63741b068fe7df955", "channel_url": "sendbird_group_channel_209709691_f7362922df2f9fc1c280f6e63741b068fe7df955", "customer_id": "Customer_3752590", "customer_at": "15:41:22", "partner_at": "15:42:55", "frt_min": 1.6, "sla_ok": true, "customer_msg": "시간 약속을 잘못 기재 한거 같습니다  목요일 오후 6 시 이후 가능 합니다", "partner_msg": "확인하겠습니다."}, {"hour": 15, "ops": true, "channel": "ebb1d5924f96c649c93961f6c2c9", "channel_url": "sendbird_group_channel_242860631_db12c78af399ebb1d5924f96c649c93961f6c2c9", "customer_id": "Customer_3046022", "customer_at": "15:50:22", "partner_at": "15:53:52", "frt_min": 3.5, "sla_ok": false, "customer_msg": "혹시 사다리차를 사용하지 못 하는 상황이라 사다리차를 이용 안한 견적 다시 받을 수 있을까요 ?", "partner_msg": "출발지 사다리 차를 사용하지 않는 조건인가요?"}, {"hour": 15, "ops": true, "channel": "62318aa00673aeb60decc916dff5", "channel_url": "sendbird_group_channel_384771236_3aa33847e70462318aa00673aeb60decc916dff5", "customer_id": "Customer_3752242", "customer_at": "15:55:46", "partner_at": "16:01:25", "frt_min": 5.6, "sla_ok": false, "customer_msg": "전화한번주세요", "partner_msg": "안녛하세요. 지금 바로 전화드려야할 문의내용이 있으신가요?   당일 플래너가 방문전 문자 및 전화드리게 되빈다."}], "16": [], "17": [], "18": [], "19": [], "20": [], "21": [], "22": [], "23": []}, "n_eligible": 49, "ops_day_avg_min": 3.2, "ops_day_n": 49, "pause_windows": [{"start": "13:20", "end": "14:20"}], "pause_label": "점심 Pause 13:20~14:20", "n_pause_excluded": 7, "holidays": ["2026-01-01", "2026-02-16", "2026-02-17", "2026-02-18", "2026-03-01", "2026-03-02", "2026-05-01", "2026-05-05", "2026-05-24", "2026-05-25", "2026-06-03", "2026-06-06", "2026-07-17", "2026-08-15", "2026-08-17", "2026-09-24", "2026-09-25", "2026-09-26", "2026-10-03", "2026-10-05", "2026-10-09", "2026-12-25"], "daily_trend": [{"date": "2026-07-22", "n": 56, "ops_n": 55, "avg_min": 9.2, "ops_avg_min": 8.7, "d7_min": 9.2, "ops_d7_min": 8.7}, {"date": "2026-07-23", "n": 59, "ops_n": 59, "avg_min": 12.4, "ops_avg_min": 12.4, "d7_min": 10.8, "ops_d7_min": 10.6}, {"date": "2026-07-24", "n": 53, "ops_n": 51, "avg_min": 13.9, "ops_avg_min": 13.2, "d7_min": 11.8, "ops_d7_min": 11.4}, {"date": "2026-07-25", "n": 33, "ops_n": 29, "avg_min": 11.6, "ops_avg_min": 7.7, "d7_min": 11.8, "ops_d7_min": 10.5}, {"date": "2026-07-26", "n": 44, "ops_n": 43, "avg_min": 7.6, "ops_avg_min": 6.7, "d7_min": 10.9, "ops_d7_min": 9.7}, {"date": "2026-07-27", "n": 80, "ops_n": 75, "avg_min": 9.4, "ops_avg_min": 7.1, "d7_min": 10.7, "ops_d7_min": 9.3}, {"date": "2026-07-28", "n": 49, "ops_n": 49, "avg_min": 3.2, "ops_avg_min": 3.2, "d7_min": 9.6, "ops_d7_min": 8.4}], "ops_7d_avg_min": 8.5, "month_label": "7월", "month_trend": [{"date": "2026-07-01", "n": 56, "ops_n": 47, "avg_min": 18.3, "ops_avg_min": 18.0}, {"date": "2026-07-02", "n": 63, "ops_n": 53, "avg_min": 8.6, "ops_avg_min": 8.0}, {"date": "2026-07-03", "n": 52, "ops_n": 52, "avg_min": 11.9, "ops_avg_min": 11.9}, {"date": "2026-07-04", "n": 49, "ops_n": 35, "avg_min": 6.6, "ops_avg_min": 3.7}, {"date": "2026-07-05", "n": 49, "ops_n": 45, "avg_min": 9.8, "ops_avg_min": 9.4}, {"date": "2026-07-06", "n": 58, "ops_n": 49, "avg_min": 17.7, "ops_avg_min": 18.2}, {"date": "2026-07-07", "n": 48, "ops_n": 45, "avg_min": 14.6, "ops_avg_min": 12.9}, {"date": "2026-07-08", "n": 65, "ops_n": 63, "avg_min": 6.3, "ops_avg_min": 5.7}, {"date": "2026-07-09", "n": 70, "ops_n": 66, "avg_min": 9.2, "ops_avg_min": 7.3}, {"date": "2026-07-10", "n": 53, "ops_n": 51, "avg_min": 11.0, "ops_avg_min": 9.3}, {"date": "2026-07-11", "n": 23, "ops_n": 22, "avg_min": 7.6, "ops_avg_min": 7.2}, {"date": "2026-07-12", "n": 44, "ops_n": 40, "avg_min": 16.1, "ops_avg_min": 15.4}, {"date": "2026-07-13", "n": 52, "ops_n": 50, "avg_min": 16.7, "ops_avg_min": 17.2}, {"date": "2026-07-14", "n": 91, "ops_n": 84, "avg_min": 11.8, "ops_avg_min": 10.4}, {"date": "2026-07-15", "n": 70, "ops_n": 67, "avg_min": 18.7, "ops_avg_min": 17.4}, {"date": "2026-07-16", "n": 72, "ops_n": 65, "avg_min": 10.6, "ops_avg_min": 8.0}, {"date": "2026-07-17", "n": 49, "ops_n": 47, "avg_min": 9.5, "ops_avg_min": 9.8}, {"date": "2026-07-18", "n": 53, "ops_n": 52, "avg_min": 11.0, "ops_avg_min": 10.5}, {"date": "2026-07-19", "n": 52, "ops_n": 50, "avg_min": 12.8, "ops_avg_min": 12.1}, {"date": "2026-07-20", "n": 74, "ops_n": 70, "avg_min": 9.2, "ops_avg_min": 8.8}, {"date": "2026-07-21", "n": 49, "ops_n": 48, "avg_min": 17.1, "ops_avg_min": 16.3}, {"date": "2026-07-22", "n": 56, "ops_n": 55, "avg_min": 9.2, "ops_avg_min": 8.7}, {"date": "2026-07-23", "n": 59, "ops_n": 59, "avg_min": 12.4, "ops_avg_min": 12.4}, {"date": "2026-07-24", "n": 53, "ops_n": 51, "avg_min": 13.9, "ops_avg_min": 13.2}, {"date": "2026-07-25", "n": 33, "ops_n": 29, "avg_min": 11.6, "ops_avg_min": 7.7}, {"date": "2026-07-26", "n": 44, "ops_n": 43, "avg_min": 7.6, "ops_avg_min": 6.7}, {"date": "2026-07-27", "n": 80, "ops_n": 75, "avg_min": 9.4, "ops_avg_min": 7.1}, {"date": "2026-07-28", "n": 49, "ops_n": 49, "avg_min": 3.2, "ops_avg_min": 3.2}], "ops_month_avg_min": 10.6};
+const DOW = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+const holidaySet = new Set(D.holidays || []);
+function formatDateLabel(isoDate) {
+  const d = new Date(isoDate + 'T12:00:00');
+  const yy = String(d.getFullYear()).slice(2);
+  const mm = String(d.getMonth() + 1).padStart(2, '0');
+  const dd = String(d.getDate()).padStart(2, '0');
+  const dow = d.getDay();
+  const isOff = dow === 0 || dow === 6 || holidaySet.has(isoDate);
+  return yy + '-' + mm + '-' + dd
+    + '(<span class="dow' + (isOff ? ' off' : '') + '">' + DOW[dow] + '</span>)';
+}
+const labels = D.hours.map(h => h.hour + '시');
+const avgs = D.hours.map(h => h.avg_min);
+let selectedHour = null;
+
+document.getElementById('subtitle').textContent =
+  D.date + ' · 운영 ' + D.ops_hours + ' · SLA ' + D.sla_min + '분 · eligible ' + D.n_eligible
+  + (D.pause_label ? (' · ' + D.pause_label + ' 제외 ' + (D.n_pause_excluded || 0) + '건') : '')
+  + ' · 규칙: ' + (D.ops_rule || '');
+document.getElementById('genAt').textContent = D.generated_at + ' · 30분마다 데이터 갱신';
+(function () {
+  const el = document.getElementById('pauseRuleNote');
+  if (!el) return;
+  if (D.pause_label) {
+    el.textContent = '(오늘 감지: ' + D.pause_label.replace('점심 Pause ', '') + ')';
+  } else {
+    el.textContent = '(당일 점심 자동응답이 있으면 해당 시각을 자동 적용)';
+  }
+})();
+(function renderStatus7d() {
+  const root = document.getElementById('status7d');
+  if (!root) return;
+  const target = D.sla_min || 3;
+  const rows = (D.daily_trend || []).slice().reverse().slice(0, 7);
+  root.innerHTML = rows.map((r, idx) => {
+    const dateHtml = formatDateLabel(r.date);
+    let rel = '';
+    if (idx === 0) rel = '<span class="rel">(today)</span>';
+    else if (idx === 1) rel = '<span class="rel">(어제)</span>';
+    const n = r.ops_avg_min;
+    if (n === null || n === undefined) {
+      return '<li class="' + (idx === 0 ? 'today' : '') + '">'
+        + '<span class="col-date">' + dateHtml + '</span>'
+        + '<span class="col-n nodata">—</span>'
+        + '<span class="col-label">운영시간내 FRT</span>'
+        + '<span class="col-verdict nodata">—' + rel + '</span></li>';
+    }
+    const hit = n <= target;
+    const gap = Math.round((n - target) * 10) / 10;
+    const gapStr = (gap > 0 ? '+' : '') + gap;
+    const tone = hit ? 'hit' : 'miss';
+    const verdict = (hit ? '성공' : '실패') + '(' + gapStr + ')';
+    return '<li class="' + (idx === 0 ? 'today' : '') + '">'
+      + '<span class="col-date">' + dateHtml + '</span>'
+      + '<span class="col-n ' + tone + '">' + n + '</span>'
+      + '<span class="col-label">운영시간내 FRT</span>'
+      + '<span class="col-verdict ' + tone + '">' + verdict + rel + '</span></li>';
+  }).join('') || '<li class="nodata">최근 7일 데이터 없음</li>';
+})();
+function titleWithN(tag, prefix, n, hint) {
+  const val = (n !== null && n !== undefined) ? n : '-';
+  let cls = 'n-val';
+  if (typeof n === 'number') {
+    cls += (n <= 3) ? ' hit' : ' miss';
+  }
+  const tagHtml = tag ? '<span class="card-tag">[' + tag + ']</span>' : '';
+  const hintHtml = hint ? ' <span class="n-hint">(' + hint + ')</span>' : '';
+  return tagHtml + prefix + ' <span class="' + cls + '">' + val + '</span>' + hintHtml;
+}
+document.getElementById('chartTitle').innerHTML =
+  titleWithN('daily FRT 운영 지표', formatDateLabel(D.date) + ' 시간별차트 *FRT 평균', D.ops_day_avg_min, '운영시간 내 평균 FRT');
+document.getElementById('statusTitle').innerHTML =
+  '<span class="card-tag">[일일 운영시간내 FRT 달성]</span>일일 운영시간내 FRT 달성 여부';
+document.getElementById('hourlyCaption').textContent =
+  '막대 클릭 → raw · 빨강=3분 이내 · 파랑=3분 초과 · 연녹=운영시간 · 연주황=점심 Pause'
+  + (D.pause_label ? ('(' + D.pause_label.replace('점심 Pause ','') + ')') : '')
+  + ' · 빨간 점선=3분 SLA';
+document.getElementById('rawCsvLink').href = D.raw_csv;
+
+function renderRaw(hour) {
+  const fold = document.getElementById('rawFold');
+  const rows = hour === null
+    ? Object.values(D.raw_by_hour).flat()
+    : (D.raw_by_hour[String(hour)] || []);
+  rows.sort((a,b) => a.customer_at.localeCompare(b.customer_at));
+  document.getElementById('rawSummary').textContent =
+    hour === null
+      ? 'Raw 세션 보기 · 전체 ' + rows.length + '건'
+      : 'Raw 세션 보기 · ' + hour + '시 ' + rows.length + '건';
+  document.getElementById('rawCaption').textContent =
+    hour === null
+      ? '전체 시간대 raw (차트 막대를 클릭하면 해당 시만 필터)'
+      : hour + '시 세션 raw · CSV: ' + D.raw_csv;
+  document.getElementById('rawTable').innerHTML = rows.map(r => {
+    const sla = r.sla_ok ? '<span class="ok">OK</span>' : '<span class="bad">OVER</span>';
+    const ops = r.ops ? '운영' : '운영외';
+    return '<tr>'
+      + '<td>' + r.hour + '</td>'
+      + '<td>' + ops + '</td>'
+      + '<td>' + r.customer_at + '</td>'
+      + '<td>' + r.partner_at + '</td>'
+      + '<td>' + r.frt_min + '</td>'
+      + '<td>' + sla + '</td>'
+      + '<td>' + r.customer_id + '</td>'
+      + '<td>' + r.channel + '</td>'
+      + '<td>' + (r.customer_msg || '') + '</td>'
+      + '<td>' + (r.partner_msg || '') + '</td>'
+      + '</tr>';
+  }).join('') || '<tr><td colspan="10">해당 시간대 세션 없음</td></tr>';
+  fold.open = true;
+  document.getElementById('clickHint').textContent =
+    hour === null ? '전체 raw 표시 중' : (hour + '시 raw 표시 중 · 다시 같은 막대 클릭 시 전체로');
+}
+
+function barColor(v) {
+  if (v === null || v === undefined) return 'rgba(200,205,210,0.35)';
+  return v <= 3 ? 'rgba(209,67,67,0.85)' : 'rgba(37,99,235,0.70)';
+}
+
+const ctx = document.getElementById('chartHourly');
+const opsBandPlugin = {
+  id: 'opsBand',
+  beforeDraw(chart) {
+    const {ctx, chartArea, scales} = chart;
+    if (!chartArea || !scales.x) return;
+    const x = scales.x;
+    const unit = x.getPixelForValue(1) - x.getPixelForValue(0);
+    const pad = unit / 2;
+    const timeToX = (hhmm) => {
+      const parts = String(hhmm).split(':');
+      const h = parseInt(parts[0], 10);
+      const m = parts.length > 1 ? parseInt(parts[1], 10) : 0;
+      return x.getPixelForValue(h) - pad + (m / 60) * unit;
+    };
+    const start = D.ops_start;
+    const end = D.ops_end;
+    const left = x.getPixelForValue(start) - pad;
+    const right = x.getPixelForValue(end - 1) + pad;
+    ctx.save();
+    ctx.fillStyle = 'rgba(15, 159, 110, 0.10)';
+    ctx.fillRect(left, chartArea.top, right - left, chartArea.bottom - chartArea.top);
+    ctx.strokeStyle = 'rgba(15, 159, 110, 0.55)';
+    ctx.lineWidth = 1.5;
+    ctx.setLineDash([4, 3]);
+    ctx.beginPath();
+    ctx.moveTo(left, chartArea.top);
+    ctx.lineTo(left, chartArea.bottom);
+    ctx.moveTo(right, chartArea.top);
+    ctx.lineTo(right, chartArea.bottom);
+    ctx.stroke();
+    ctx.restore();
+    ctx.save();
+    ctx.fillStyle = 'rgba(15, 159, 110, 0.85)';
+    ctx.font = '11px Segoe UI, sans-serif';
+    ctx.fillText('운영시간 ' + start + ':00~' + end + ':00', left + 6, chartArea.top + 14);
+    ctx.restore();
+    const pauses = D.pause_windows || [];
+    pauses.forEach((pw, idx) => {
+      const pl = timeToX(pw.start);
+      const pr = timeToX(pw.end);
+      ctx.save();
+      ctx.fillStyle = 'rgba(217, 119, 6, 0.16)';
+      ctx.fillRect(pl, chartArea.top, Math.max(pr - pl, 2), chartArea.bottom - chartArea.top);
+      ctx.strokeStyle = 'rgba(217, 119, 6, 0.7)';
+      ctx.lineWidth = 1.5;
+      ctx.setLineDash([3, 3]);
+      ctx.beginPath();
+      ctx.moveTo(pl, chartArea.top);
+      ctx.lineTo(pl, chartArea.bottom);
+      ctx.moveTo(pr, chartArea.top);
+      ctx.lineTo(pr, chartArea.bottom);
+      ctx.stroke();
+      ctx.fillStyle = 'rgba(180, 83, 9, 0.95)';
+      ctx.font = '11px Segoe UI, sans-serif';
+      ctx.fillText('Pause ' + pw.start + '~' + pw.end, pl + 4, chartArea.top + 28 + idx * 14);
+      ctx.restore();
+    });
+  }
+};
+const chart = new Chart(ctx, {
+  type: 'bar',
+  data: {
+    labels,
+    datasets: [
+      {
+        label: '평균 FRT (분)',
+        data: avgs,
+        backgroundColor: avgs.map(barColor),
+      },
+      {
+        label: '3분 SLA',
+        data: Array(24).fill(3),
+        type: 'line',
+        borderColor: '#d14343',
+        borderDash: [6,3],
+        pointRadius: 0,
+        borderWidth: 1.5,
+      },
+    ],
+  },
+  options: {
+    responsive: true,
+    interaction: { mode: 'index', intersect: false },
+    onClick: (evt, elements) => {
+      if (!elements.length) {
+        selectedHour = null;
+        renderRaw(null);
+        return;
+      }
+      const idx = elements[0].index;
+      const h = D.hours[idx].hour;
+      if (selectedHour === h) {
+        selectedHour = null;
+        renderRaw(null);
+      } else {
+        selectedHour = h;
+        renderRaw(h);
+      }
+    },
+    scales: {
+      y: {
+        title: { display: true, text: '평균 FRT (분)' },
+        beginAtZero: true,
+      },
+      x: { title: { display: true, text: '시작 시각 (KST)' } },
+    },
+    plugins: {
+      legend: { position: 'bottom' },
+      tooltip: {
+        callbacks: {
+          afterBody: (items) => {
+            const i = items[0].dataIndex;
+            const h = D.hours[i];
+            const zone = h.ops ? '운영시간' : '운영외';
+            const hit = (h.avg_min !== null && h.avg_min <= 3) ? '3분 이내' : '3분 초과';
+            return zone + ' · ' + hit + ' · 세션 ' + h.n + '건 · SLA ' + (h.sla_pct ?? '-') + '%';
+          }
+        }
+      }
+    },
+  },
+  plugins: [opsBandPlugin],
+});
+
+// 7D 일자별 평균 FRT
+const trend = D.daily_trend || [];
+const tLabels = trend.map(r => r.date.slice(5));
+const n7d = (D.ops_7d_avg_min !== null && D.ops_7d_avg_min !== undefined) ? D.ops_7d_avg_min : '-';
+document.getElementById('trendTitle').innerHTML =
+  titleWithN('7D FRT 평균 지표', '7D 일자별 FRT 평균', D.ops_7d_avg_min, '7D 운영시간 평균');
+new Chart(document.getElementById('chartD7'), {
+  type: 'line',
+  data: {
+    labels: tLabels,
+    datasets: [
+      {
+        label: '당일 평균 FRT (분)',
+        data: trend.map(r => r.avg_min),
+        borderColor: 'rgba(100,116,139,0.55)',
+        backgroundColor: 'rgba(100,116,139,0.08)',
+        tension: 0.25,
+        pointRadius: 2,
+        borderWidth: 1.5,
+      },
+      {
+        label: '운영시간 내 평균 FRT (분)',
+        data: trend.map(r => r.ops_avg_min),
+        borderColor: '#0f9f6e',
+        backgroundColor: 'rgba(15,159,110,0.08)',
+        tension: 0.25,
+        pointRadius: 3,
+        borderWidth: 2,
+      },
+      {
+        label: '운영시간 내 7D (분)',
+        data: trend.map(r => r.ops_d7_min),
+        borderColor: '#2563eb',
+        backgroundColor: 'rgba(37,99,235,0.08)',
+        tension: 0.3,
+        pointRadius: 2,
+        borderWidth: 2.5,
+      },
+      {
+        label: '3분 SLA',
+        data: Array(trend.length).fill(3),
+        borderColor: '#d14343',
+        borderDash: [6,3],
+        pointRadius: 0,
+        borderWidth: 1.5,
+      },
+    ],
+  },
+  options: {
+    responsive: true,
+    interaction: { mode: 'index', intersect: false },
+    scales: {
+      y: {
+        title: { display: true, text: '평균 FRT (분)' },
+        beginAtZero: true,
+      },
+      x: { title: { display: true, text: '일자 (KST)' } },
+    },
+    plugins: {
+      legend: { position: 'bottom' },
+      tooltip: {
+        callbacks: {
+          afterBody: (items) => {
+            const i = items[0].dataIndex;
+            const r = trend[i];
+            return '전체 ' + r.n + '건 · 운영시간내 ' + r.ops_n + '건';
+          }
+        }
+      }
+    },
+  }
+});
+
+// 월 차트: 일자별 전체 + 운영시간 내 평균 FRT
+const month = D.month_trend || [];
+const nMonth = (D.ops_month_avg_min !== null && D.ops_month_avg_min !== undefined) ? D.ops_month_avg_min : '-';
+document.getElementById('monthTitle').innerHTML =
+  titleWithN('Monthly FRT 평균 지표', '월 일자별 평균 FRT', D.ops_month_avg_min, '운영시간 기준 월평균 FRT');
+new Chart(document.getElementById('chartMonth'), {
+  type: 'bar',
+  data: {
+    labels: month.map(r => r.date.slice(8) + '일'),
+    datasets: [
+      {
+        label: '일자별 평균 FRT (분)',
+        data: month.map(r => r.avg_min),
+        backgroundColor: 'rgba(100,116,139,0.28)',
+        order: 2,
+      },
+      {
+        label: '운영시간 내 평균 FRT (분)',
+        data: month.map(r => r.ops_avg_min),
+        backgroundColor: month.map(r => barColor(r.ops_avg_min)),
+        order: 2,
+      },
+      {
+        label: '3분 SLA',
+        data: Array(month.length).fill(3),
+        type: 'line',
+        borderColor: '#d14343',
+        borderDash: [6,3],
+        pointRadius: 0,
+        borderWidth: 1.5,
+        order: 1,
+      },
+    ],
+  },
+  options: {
+    responsive: true,
+    interaction: { mode: 'index', intersect: false },
+    scales: {
+      y: {
+        title: { display: true, text: '평균 FRT (분)' },
+        beginAtZero: true,
+      },
+      x: { title: { display: true, text: '일자' } },
+    },
+    plugins: {
+      legend: { position: 'bottom' },
+      tooltip: {
+        callbacks: {
+          afterBody: (items) => {
+            const i = items[0].dataIndex;
+            const r = month[i];
+            const hit = (r.ops_avg_min !== null && r.ops_avg_min <= 3) ? '운영내 3분 이내' : '운영내 3분 초과';
+            return hit + ' · 전체 ' + r.n + '건 · 운영시간내 ' + r.ops_n + '건';
+          }
+        }
+      }
+    },
+  }
+});
+
+// 처음엔 폴드 닫힘. summary 클릭만으로도 전체 raw 볼 수 있게 기본 데이터 준비
+document.getElementById('rawFold').addEventListener('toggle', (e) => {
+  if (e.target.open && !document.getElementById('rawTable').innerHTML) {
+    renderRaw(selectedHour);
+  }
+});
+document.getElementById('rawSummary').addEventListener('click', () => {
+  // details가 열릴 때 내용 채움
+  setTimeout(() => {
+    if (document.getElementById('rawFold').open) renderRaw(selectedHour);
+  }, 0);
+});
+
+const REFRESH_MS = 30 * 60 * 1000;
+setTimeout(() => location.reload(), REFRESH_MS);
+</script>
+</body>
+</html>
