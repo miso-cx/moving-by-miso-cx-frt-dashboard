@@ -1,1 +1,11 @@
 ﻿hour,ops,channel,customer_id,customer_at,partner_at,frt_min,sla_ok,customer_msg,partner_msg,channel_url
+9,True,76095c1cccdefdd60ddb5ca9c095,Customer_3089228,09:03:50,09:43:15,39.4,False,죄송하지만 금요일 방문은 취소요청드립니다,네 고객님 취소드리겠습니다,sendbird_group_channel_252151969_2578dbdcc0fa76095c1cccdefdd60ddb5ca9c095
+9,True,5df24612c7c617885a7c96ad8497,Customer_618211,09:05:43,09:41:05,35.4,False,안녕하세요! 혹시 시간대를 저녁 6시 이후로 바꾸긴 어려울까요??,네 고객님 6시에 방문드리겠습니다!,sendbird_group_channel_209709691_0dc806877f2f5df24612c7c617885a7c96ad8497
+9,True,5471bd8008003286041d5307c297,Customer_1576996,09:07:02,09:48:20,41.3,False,안녕하세요 커텐 설치는 안 해주셔서요 ㅠ,"안녕하세요 고객님, 이사 진행시에 이사업체에서 커튼 설치 없이 이사 마무리한상황 맞으실까요?",sendbird_group_channel_209709691_bc3c6d0be06b5471bd8008003286041d5307c297
+9,True,490213e93bacb07a2d098aacf500,Customer_3751443,09:13:57,09:48:44,34.8,False,"*상담내용 중 주의필요 짐 목록의 수정  TV 2개 사이즈: 각 65, 49인치 책장 1개 책상 2개 27인치 모니터  *요청:  도착지에 있는",넵넵 수정드리겠습니다!,sendbird_group_channel_384649186_cb289f9ab84c490213e93bacb07a2d098aacf500
+9,True,e58ef8535b8a70067e7236553070,Customer_3753503,09:14:35,09:39:03,24.5,False,안녕하세요! 죄송하지만 예약 취소 부탁드리겠습니다:),네 고객님 취소드리겠습니다,sendbird_group_channel_209709691_d0183bd2c770e58ef8535b8a70067e7236553070
+9,True,d1f3874f80d9f6c9760ffd3a28f5,Customer_3386182,09:23:39,09:38:57,15.3,False,죄송하지만 시간 조율이 가능할까요?,"안녕하세요 고객님, 언제로 조율 희망하실까요?",sendbird_group_channel_209709691_66256f66801fd1f3874f80d9f6c9760ffd3a28f5
+9,True,519a4bb2bed7cab7be54d7533c7f,Customer_1195815,09:38:07,09:38:41,0.6,True,금요일 5시도어려울까요?,네네 금요일은 4시쯤에 가능할 것 같습니다 (_ _),sendbird_group_channel_209709691_087189f87fd8519a4bb2bed7cab7be54d7533c7f
+9,True,0fb98cb35ddcb9c57591250a87ac,Customer_3708612,09:40:41,09:42:10,1.5,True,아아 용달이랑 이사서비스랑 다른첨이 뭔가요?,"용달은 단순 짐 운반(트럭 앞까지는 고객님께서 운반 필요)만 진행된다 봐주시면 됩니다! 이사의 경우 여러 유형에 따라 다르지만, 통상적인 포장이",sendbird_group_channel_377585390_5acd5bc544310fb98cb35ddcb9c57591250a87ac
+9,True,87d486e6c15a33cc43ee63b003f3,Customer_2092445,09:43:32,09:46:20,2.8,True,잇나요,"안녕하세요 고객님, 해당업체에 한번 네고가능할지 여쭤보겠습니다!",sendbird_group_channel_209709691_e7a5a04eef0d87d486e6c15a33cc43ee63b003f3
+9,True,5df0daca571e2605f90a85dcb9a3,Customer_3745202,09:45:02,09:46:53,1.8,True,네 알겠습니다,감사합니다!,sendbird_group_channel_383766187_355f4b99a43e5df0daca571e2605f90a85dcb9a3
