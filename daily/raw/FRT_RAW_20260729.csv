@@ -19,7 +19,7 @@
 11,True,e5362b2f91c06ccc508bfda6cf33,Customer_3752919,11:01:20,11:03:49,2.5,True,죄송하지만 이 시간에 집에 없습니다 11시 이전에 방문 부탁드립니다 오늘은 어렵고 내일 일정 다시 잡을 수 있을까요? 10시30분에 좋습니다,확인하겠습니다.,sendbird_group_channel_384837657_850860099355e5362b2f91c06ccc508bfda6cf33
 11,True,4d4a40bb9ddec171b38d62aa55c4,Customer_3142201,11:03:03,11:04:06,1.1,True,"두룸인데 옷이랑 화장품 (조금만 많음 )강아지 용품 서랍장 2개  옷 행어 조금한거 1개 강아지 드라이기룸 , 네일 용품 , 금고 이렇게 있어여",죄송하지만 여기가 아닌 해당 일정에 방문하는 이사플래너에게 해당 내용을 전달해주세요.,sendbird_group_channel_257739747_e0228668768a4d4a40bb9ddec171b38d62aa55c4
 11,True,03af72fb6f3dc2f05a1eb4837cc0,Customer_3752175,11:19:42,11:20:40,1.0,True,네,감사합니다.,sendbird_group_channel_384764092_9db9af4b298903af72fb6f3dc2f05a1eb4837cc0
-11,True,e17e7731d83d79525927be8facba,Customer_3748712,11:20:48,11:22:17,1.5,True,혹시 반포장으로도 견적을 받아볼 수 있을까요?,미소방문 반포장 가이드_최종 - 복사본.png,sendbird_group_channel_209709691_cec028a9d0ade17e7731d83d79525927be8facba
+11,True,e17e7731d83d79525927be8facba,Customer_3748712,11:20:48,11:22:17,1.5,True,혹시 반포장으로도 견적을 받아볼 수 있을까요?,,sendbird_group_channel_209709691_cec028a9d0ade17e7731d83d79525927be8facba
 11,True,fcecb6dc6317a8a50edb29bb5049,Customer_3746627,11:33:48,11:33:54,0.1,True,질문있습니다.,넵,sendbird_group_channel_209709691_113d7988641dfcecb6dc6317a8a50edb29bb5049
 11,True,172a09163141b5928c576fd6d01b,Customer_3748858,11:34:35,11:38:26,3.9,False,406호인데 호수를 잘못입력했습니다,네 수정도와드릴게요,sendbird_group_channel_384299947_cebf1092a63f172a09163141b5928c576fd6d01b
 11,True,7d75413afda357f29eea450287f6,Customer_3488578,11:42:53,11:44:01,1.1,True,전체 이사가 아니라 23평 빌라에 가구와 일부 짐만 갑니다,해당 내용은 방문하는 플래너에게 전달해주시면 감사드리겠습니다.,sendbird_group_channel_341109994_65e0e6790ea67d75413afda357f29eea450287f6
@@ -31,3 +31,7 @@
 12,True,5da79504c0e0bd7267f000e660ca,Customer_3748518,12:36:58,12:37:49,0.8,True,네~알겠습니다,감사합니다.,sendbird_group_channel_209709691_135ae47cf0505da79504c0e0bd7267f000e660ca
 12,True,9216fb371d1288d28bb9f7305e00,Customer_3750921,12:38:02,12:38:19,0.3,True,안녕하세요. 혹시 내일 오후 방문으로 일정 변경 가능할까요?,확인하겠습니다.,sendbird_group_channel_209709691_a44cf52f827b9216fb371d1288d28bb9f7305e00
 12,True,2d20d3dc01e03990c3343ed9f2c2,Customer_3751942,12:39:58,12:41:21,1.4,True,토요일날 제가 일정이 생겨서 다른날에 일정 잡아서 다시 연락 드려도 될까요?,그럼 다음주로 변경도와드릴까요?,sendbird_group_channel_209709691_88e0199614fc2d20d3dc01e03990c3343ed9f2c2
+12,True,2d8a5288f78ca585d793e789ef23,Customer_3751937,12:48:41,12:53:49,5.1,False,예약취소부탁드립니다,취소 사유는 어떻게 될까요?,sendbird_group_channel_209709691_d1e9ef4963122d8a5288f78ca585d793e789ef23
+13,True,e17e7731d83d79525927be8facba,Customer_3748712,13:03:44,13:08:03,4.3,False,"네 옷, 책, 그릇 등 담을 박스는 가져와주시는거지요?",반포장이면 주방짐은 직접 포장이 되어있어야합니다.,sendbird_group_channel_209709691_cec028a9d0ade17e7731d83d79525927be8facba
+13,True,1f7009e041eb7fd15ce0844f0269,Customer_3739240,13:13:15,13:16:53,3.6,False,"안녕하세요, 잔금 지급은 완료 했고  150만원에 세금 15만원 더해서 165만원 결제 했어요. 현금영수증 받으려면 그렇게 해야한다고 해서 ..","잔금에 대해선 이사업체측에 요청해주시면 되는데, 잔금에 대해선 현금영수증",sendbird_group_channel_209709691_874f3eacf3c61f7009e041eb7fd15ce0844f0269
+13,True,a423b668fb65e1693b737618f2f4,Customer_3702813,13:13:34,13:17:39,4.1,False,오늘 이사했는데요.. 오늘 이사비용에 계약금빼고 납부하고 나머지는 이사날짜에 입금하면 되지않나요?,넵 맞습니다/,sendbird_group_channel_376708640_8e066c42fbe8a423b668fb65e1693b737618f2f4
