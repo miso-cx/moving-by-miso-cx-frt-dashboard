@@ -1,3 +1,7 @@
 ﻿hour,ops,channel,customer_id,customer_at,partner_at,frt_min,sla_ok,customer_msg,partner_msg,channel_url
 9,True,6068b00164ca9af13d13a27a4ce2,Customer_3725159,09:23:36,09:27:22,3.8,False,안녕하세요. 집이 골목 안쪽에 있어서요. 현장견적때 트럭이 들어올 경로가 잘 체크가 된건지 확인요청드입니다. 현장견적때 정확히 어디로 들어갈지 ,"📦 [계약 이후 이사업체와 직접 소통해주세요!]  고객님, 계약이 완료된 이후부터는 실제 이사를 담당하는 이사파트너와 직접 자주 소통해주시는 것",sendbird_group_channel_209709691_c7e2688c1ec56068b00164ca9af13d13a27a4ce2
 9,True,ac88f875835d3b751559232158c4,Customer_3591615,09:27:24,09:29:43,2.3,True,저번에 미스터방 견적왓엇는데 이번에도되는지 확인해주새요~ 포함해서 다른견적같이받아보고싶어요,안녕하세요. 해당업체 참여의사를 확인해보겠습니다.,sendbird_group_channel_363390731_d8545a80c7ffac88f875835d3b751559232158c4
+9,True,6df7e16eb6c72a896613dfda9479,Customer_957436,09:33:04,10:05:55,32.9,False,아름다운이사 견적 다시 부탁드려요,네 잠시만 기다려주세요,sendbird_group_channel_118818941_5210d3cac74d6df7e16eb6c72a896613dfda9479
+9,True,7ae7c8c0b6a5261b4bc0c99d9664,Customer_3753333,09:34:51,10:05:43,30.9,False,왜 견적이 하나도 안올까요?,잠시만 기다려주세요.,sendbird_group_channel_209709691_fd3a11573fb97ae7c8c0b6a5261b4bc0c99d9664
+9,True,5bb8edf0843d6add1203850508b7,Customer_3751084,09:44:46,10:04:55,20.1,False,오래걸릴까요??,잠시만 기다려주세요,sendbird_group_channel_384615716_156d37e11f635bb8edf0843d6add1203850508b7
+10,True,e21f835ab7c03a0a31355dcacd44,Customer_3750312,10:12:00,10:16:17,4.3,False,네 감사합니다,감사합니다,sendbird_group_channel_384513733_a34730311be3e21f835ab7c03a0a31355dcacd44
