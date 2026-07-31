@@ -1,0 +1,14 @@
+.env
+secrets/mysql.env
+secrets/admin.env
+secrets/anthropic.env
+tools/cloud-sql-proxy.exe
+tools/google-cloud-sdk/
+tools/cloud-cli-download.zip
+tools/cloud_sql_proxy_last.log
+tools/cloud_sql_proxy_auto.log
+.deploy/
+docs/frt/_publish/
+docs/frt/.refresh.lock
+docs/frt/deploy_status.json
+docs/frt/followup_cache/

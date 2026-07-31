@@ -1,0 +1,17 @@
+---
+description: 챗 FRT 3분이내 달성 — 정의·일일 리포트 파일 강제
+alwaysApply: true
+---
+
+# FRT 3분이내 달성
+
+사용자가 **FRT**, **First Response Time**, **첫 응답 시간**, **응답 속도**, **챗 SLA**, **partner reply latency**, **데일리 FRT**, **FRT 마감**, **어제 FRT** 등을 요청하면:
+
+1. **맵** `docs/frt/AGENTS.md` → **정본** `docs/FRT_DEFINITION.md`를 따른다. 임의로 모수·공식을 바꾸지 않는다.
+2. **일일 루프**는 `docs/frt/HARNESS.md` + 스킬 `.cursor/skills/frt-management/SKILL.md`를 따른다.
+3. 가능하면 `python tools/run_frt_daily.py` (또는 `--date`)로 측정한다.
+4. 조회가 되면 **반드시** 저장한다:
+   - `docs/frt/daily/FRT_DAILY_YYYYMMDD.md`
+   - `docs/FRT_REPORT_YYYYMMDD_YYYYMMDD.md` (기간 리포트면 start_end)
+5. 쿼리 템플릿은 `queries/frt/` (Fact 신선할 때), DB는 `chat_poc`다.
+6. 정의 변경이 필요하면 리포트 전에 `FRT_DEFINITION.md` 버전을 올린다.
