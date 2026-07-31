@@ -1,3 +1,8 @@
 ﻿hour,ops,channel,customer_id,customer_at,partner_at,frt_min,sla_ok,customer_msg,partner_msg,channel_url
 8,False,efdd9724ee4fca14e0d00fe27e1a,Customer_3695722,08:10:12,08:59:20,49.1,False,8월19일로 날짜변경해서 견적 한번 받아볼수있을까요? 말일이라 너무 비싸네어ㅡ,혹시 제공한 견적에서 마음에 드는 업체는 없나요,sendbird_group_channel_375830134_c4b6d171ca7cefdd9724ee4fca14e0d00fe27e1a
 8,False,aefa4401b48a5c012ae2b06e4965,Customer_3743883,08:35:20,08:58:29,23.2,False,안녕하세요 어제 입주청소 대기시간 포함 견적 요청드렸는데 청소는 나중에 하기로 했어요. 청소 대기시간 없이 이사만 견적 부탁드립니다.,"안녕하세요. 대기시가는 이사 총 비용에 포함되지 않고, 각각의 파트너의 답변으로 시간당 비용을 표기하고 있습니다.",sendbird_group_channel_209709691_dd5bf0c7bb37aefa4401b48a5c012ae2b06e4965
+9,True,43d4999193ee064326ce6f5d04d5,Customer_3752273,09:16:15,10:05:52,49.6,False,견적서에 285만원인데 285만원이 맞을까요?,해당 업체는 팀장급 인력들만 투입되어 고품질의 서비스를 제공하는 업체로 다소 금액을 높게 측정하는 업체입니다. 추가견적 수집되는대로 다시 전달드,sendbird_group_channel_384773596_f78987aee6db43d4999193ee064326ce6f5d04d5
+9,True,8dcf1c1e005d4c1ea957812d4238,Customer_3748781,09:28:23,10:03:24,35.0,False,안녕하세요  석영운수 반포장 조건으로 계약할려고합니다. 견적서금액을  반포장 금액으로 변겅해주시면 계약할께요^^,확인했습니다. 금액 수정해두겠습니다!,sendbird_group_channel_384292081_c19d9834e6ab8dcf1c1e005d4c1ea957812d4238
+9,True,7d75413afda357f29eea450287f6,Customer_3488578,09:46:51,10:05:05,18.2,False,가져갈 책과 옷은 따로 분류해놓으면 되는 거지요. 내용물은 박스나 봉투로 분류해놓으면 되구요,음 미소 이사서비스는 견적서비스에요. 그래서 이사디테일에 대한 규정은 따로 없습니다.,sendbird_group_channel_341109994_65e0e6790ea67d75413afda357f29eea450287f6
+9,True,a68b8326a52e8dd4539f982786ec,Customer_3692712,09:52:25,10:03:52,11.4,False,출발지는 사다리 엘베 모두 가능하다네요,안녕하세요.,sendbird_group_channel_375339682_542c784a365ba68b8326a52e8dd4539f982786ec
+10,True,24e49688112296143a561aa3deba,Customer_2877270,10:01:35,10:05:44,4.1,False,추가견적있으면 이야기부탁드려요~!,네 추가 들어올때마다 전달드릴게요,sendbird_group_channel_215674430_510702fb6c7f24e49688112296143a561aa3deba
