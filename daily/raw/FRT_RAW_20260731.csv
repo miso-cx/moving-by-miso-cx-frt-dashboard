@@ -1,1 +1,3 @@
 ﻿hour,ops,channel,customer_id,customer_at,partner_at,frt_min,sla_ok,customer_msg,partner_msg,channel_url
+8,False,efdd9724ee4fca14e0d00fe27e1a,Customer_3695722,08:10:12,08:59:20,49.1,False,8월19일로 날짜변경해서 견적 한번 받아볼수있을까요? 말일이라 너무 비싸네어ㅡ,혹시 제공한 견적에서 마음에 드는 업체는 없나요,sendbird_group_channel_375830134_c4b6d171ca7cefdd9724ee4fca14e0d00fe27e1a
+8,False,aefa4401b48a5c012ae2b06e4965,Customer_3743883,08:35:20,08:58:29,23.2,False,안녕하세요 어제 입주청소 대기시간 포함 견적 요청드렸는데 청소는 나중에 하기로 했어요. 청소 대기시간 없이 이사만 견적 부탁드립니다.,"안녕하세요. 대기시가는 이사 총 비용에 포함되지 않고, 각각의 파트너의 답변으로 시간당 비용을 표기하고 있습니다.",sendbird_group_channel_209709691_dd5bf0c7bb37aefa4401b48a5c012ae2b06e4965
