@@ -1,1 +1,4 @@
 ﻿hour,ops,channel,customer_id,customer_at,partner_at,frt_min,sla_ok,customer_msg,partner_msg,channel_url
+10,True,3267b162df55ae2ae2e2bf6eb74d,Customer_3751536,10:02:15,10:09:01,6.8,False,안녕하세요 혹시 오늘 11시에 방문 주시는 일정 동일한지 확인차 연락드립니다., 날짜: 2026-08-01 (토)   · 시간: 11:30 ~ 12:30   안녕하세요. 금일 플래너로부터 연락받으셨을까요,sendbird_group_channel_384660292_f4d69e475b4a3267b162df55ae2ae2e2bf6eb74d
+10,True,837acbfc0a699310d0a55990a110,Customer_3746130,10:14:35,10:15:01,0.4,True,안녕하세요 버리기로 한 짐중에 책상이 추가됩니다,책상이 어느정도 의 사이즈이죠?,sendbird_group_channel_383906437_f18098ec91e4837acbfc0a699310d0a55990a110
+10,True,d640160a30589b857d12d0e70d0e,Customer_3707619,10:15:20,10:15:49,0.5,True,"안녕하세요, 문의드립니다. 미소 통해서 계약 후 50만원 입금드렸고 이사업체에 이사 후 나머지 잔금 500만원 입금 드린 후 세금계산서 발행 요","안녕하세요,. 상황을 잘 전달해주셔서 감사합니다.",sendbird_group_channel_209709691_cc676586f552d640160a30589b857d12d0e70d0e
