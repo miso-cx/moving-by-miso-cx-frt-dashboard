@@ -1,0 +1,2 @@
+﻿hour,ops,channel,customer_id,customer_at,partner_at,frt_min,sla_ok,customer_msg,partner_msg,channel_url
+8,False,3265c6ec150c5685600a88041657,Customer_2953745,08:54:42,09:01:43,7.0,False,안녕하세요.  행복이사로 결정하고 싶은데. 작업자분 수가 적고. 이사짐 톤수도 다른업체랑  차이가 있어서. 혹시 추가금 발생여부가 어찌될지 궁금,안녕하세요.,sendbird_group_channel_228193674_fc75336f853c3265c6ec150c5685600a88041657
