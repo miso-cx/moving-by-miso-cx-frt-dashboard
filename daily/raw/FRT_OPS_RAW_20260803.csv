@@ -1,1 +1,2 @@
 ﻿hour,ops,channel,customer_id,customer_at,partner_at,frt_min,sla_ok,customer_msg,partner_msg,channel_url
+9,True,2688e09dfe98557e9c0e341c7305,Customer_3758044,09:07:31,09:07:39,0.1,True,방문견적 취소 부탁합니다,넵 취소로 돕겠습니다.,sendbird_group_channel_209709691_e596416564fb2688e09dfe98557e9c0e341c7305

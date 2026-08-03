@@ -1,2 +1,5 @@
 ﻿hour,ops,channel,customer_id,customer_at,partner_at,frt_min,sla_ok,customer_msg,partner_msg,channel_url
+8,False,1aec949876214050444e85933e06,Customer_3754943,08:38:39,09:07:20,28.7,False,27일로 날짜 변경해서 견적받아주시고 시스템장 일산으로 이전설치 비용도 견적받아주세요,안녕하세요. 그러면  이사일정을 8/27로 변경해서 기존 확인한 내용들을 반영하고  견적을 추가로 더 진행하길 희망하시나요,sendbird_group_channel_209709691_f1b0863dcfe01aec949876214050444e85933e06
+8,False,e2c440a01b496e0715280f574cf2,Customer_3690322,08:44:22,09:03:47,19.4,False,안녕하세요......,안녕하세요.,sendbird_group_channel_374829640_4034ac059a72e2c440a01b496e0715280f574cf2
 8,False,3265c6ec150c5685600a88041657,Customer_2953745,08:54:42,09:01:43,7.0,False,안녕하세요.  행복이사로 결정하고 싶은데. 작업자분 수가 적고. 이사짐 톤수도 다른업체랑  차이가 있어서. 혹시 추가금 발생여부가 어찌될지 궁금,안녕하세요.,sendbird_group_channel_228193674_fc75336f853c3265c6ec150c5685600a88041657
+9,True,2688e09dfe98557e9c0e341c7305,Customer_3758044,09:07:31,09:07:39,0.1,True,방문견적 취소 부탁합니다,넵 취소로 돕겠습니다.,sendbird_group_channel_209709691_e596416564fb2688e09dfe98557e9c0e341c7305
