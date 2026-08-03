@@ -1,2 +1,7 @@
 ﻿hour,ops,channel,customer_id,customer_at,partner_at,frt_min,sla_ok,customer_msg,partner_msg,channel_url
 9,True,2688e09dfe98557e9c0e341c7305,Customer_3758044,09:07:31,09:07:39,0.1,True,방문견적 취소 부탁합니다,넵 취소로 돕겠습니다.,sendbird_group_channel_209709691_e596416564fb2688e09dfe98557e9c0e341c7305
+9,True,1d2a984653663b96774bca17c7d8,Customer_3757545,09:18:18,09:19:28,1.2,True,안녕하세요  8월 3일이나 8월 4일은  견적보러 못 오시는지요  8월 31일 이사인데 빠른견적 진행  원합니다,확인하고 여기 남기겠습니다,sendbird_group_channel_209709691_e9902ec43c951d2a984653663b96774bca17c7d8
+9,True,edbb8709076fa73f1e29f56927da,Customer_3756634,09:18:28,09:20:19,1.8,True,,확인하고 여기에 남기겠습니다,sendbird_group_channel_209709691_8b4f3a9b1a88edbb8709076fa73f1e29f56927da
+9,True,8d6f0ce240bd1a989dfdcc521b26,Customer_3223638,09:23:22,09:23:50,0.5,True,안녕하세요  9/19 이사할  김현입니다 혹시 이사 견적서  파일로 다시 보내주실수 있을까요?,이사 앱 > 예약내역 > 이사 에 들어가시면 현재 선택하신 견적서 내용을 보실 수 있어요,sendbird_group_channel_209709691_8449c60490218d6f0ce240bd1a989dfdcc521b26
+9,True,3b57d38e02922f1df95db5f9c873,Customer_3758949,09:24:48,09:25:28,0.7,True,"안녕하세요, 시간이 6시 30분에 가능한데 조정가능할까요?",안녕하세요. 플래너의 마지막 방문은 18시입니다. 괜찮으실까요?,sendbird_group_channel_209709691_357df65dae273b57d38e02922f1df95db5f9c873
+9,True,81cd5bc915c6818dcf7e59c75c69,Customer_2970739,09:28:13,09:29:12,1.0,True,"합동익스프레스하고 계약을 10월 2일 상차하고 3일간 보관하고 10월5일 하차,정리하는것으로 최종 견적서 보내달라고 요청합니다.","안녕하세요. 잠시 확인하고 수정해두겠습니다,",sendbird_group_channel_209709691_ecdce293eaa081cd5bc915c6818dcf7e59c75c69
